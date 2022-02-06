@@ -258,7 +258,7 @@ public class NexusClient {
     }
 
     public List<RoleXOResponse> getRoles() {
-        return v1Api.getRoles(null);
+        return v1Api.getRoles("default");
     }
 
     public void createRole(RoleXORequest roleXORequest) {
