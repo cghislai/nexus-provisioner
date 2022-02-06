@@ -86,7 +86,7 @@ public class KubernetesClient {
         }
         checkEnabled();
 
-        String secretName = Optional.ofNullable(secretValueModel.getSecretKey())
+        String secretName = Optional.ofNullable(secretValueModel.getSecretName())
                 .orElseThrow(() -> new ClientRuntimeError("No secret name"));
         String secretKey = Optional.ofNullable(secretValueModel.getSecretKey())
                 .orElseThrow(() -> new ClientRuntimeError("No secret key"));
