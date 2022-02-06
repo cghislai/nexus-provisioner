@@ -9,14 +9,12 @@ import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1Pod;
 import io.kubernetes.client.openapi.models.V1PodList;
 import io.kubernetes.client.openapi.models.V1Secret;
-import io.kubernetes.client.openapi.models.V1SecretList;
 import io.kubernetes.client.util.ClientBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -101,14 +99,26 @@ public class KubernetesClient {
             throw new ClientRuntimeError("Unable to get secret " + secretName);
         }
 
-        String secretData = Optional.ofNullable(v1Secret.getData())
-                .map(s -> Optional.ofNullable(s.get(secretKey)).orElseThrow(
-                        () -> new ClientRuntimeError("Unable to find secretKey " + secretKey + " in secret " + secretName)
-                ))
-                .map((byte[] bytes) -> Base64.getDecoder().decode(bytes))
-                .map(decoded -> new String(decoded, StandardCharsets.UTF_8))
-                .orElseThrow(() -> new ClientRuntimeError("Unable to read secretKey " + secretKey + " in secret " + secretName));
+        String secretData = getSecretDataProp(v1Secret, secretKey);
         return secretData;
+    }
+
+    // see https://github.com/kubernetes-client/java/issues/1377
+    private String getSecretDataProp(V1Secret secret, String key) {
+        String data = null;
+        String secretName = secret.getMetadata().getName();
+
+        try {
+            if (secret != null && secret.getData() != null && secret.getData().containsKey(key)) {
+                data = new String(secret.getData().get(key));
+            } else {
+                throw new ClientRuntimeError("Unable to find secretKey " + key + " in secret " + secretName);
+            }
+        } catch (Exception e) {
+            throw new ClientRuntimeError("Unable to read secretKey " + key + " in secret " + secretName);
+        }
+
+        return data;
     }
 
     private CoreV1Api initApi() throws IOException {
