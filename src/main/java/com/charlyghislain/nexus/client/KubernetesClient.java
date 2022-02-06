@@ -102,10 +102,12 @@ public class KubernetesClient {
         }
 
         String secretData = Optional.ofNullable(v1Secret.getData())
-                .map(s -> s.get(secretKey))
+                .map(s -> Optional.ofNullable(s.get(secretKey)).orElseThrow(
+                        () -> new ClientRuntimeError("Unable to find secretKey " + secretKey + " in secret " + secretName)
+                ))
                 .map((byte[] bytes) -> Base64.getDecoder().decode(bytes))
                 .map(decoded -> new String(decoded, StandardCharsets.UTF_8))
-                .orElseThrow(() -> new ClientRuntimeError("Unable to find secretKey " + secretKey + " in secret " + secretName));
+                .orElseThrow(() -> new ClientRuntimeError("Unable to read secretKey " + secretKey + " in secret " + secretName));
         return secretData;
     }
 
