@@ -1,0 +1,3 @@
+GET {{uri}}//service/rest/v1/email
+Authorization: Basic {{user}} {{password}}
+Accept: application/json

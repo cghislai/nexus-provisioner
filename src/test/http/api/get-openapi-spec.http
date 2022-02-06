@@ -1,0 +1,2 @@
+GET {{uri}}//service/rest/swagger.json
+Accept: application/json

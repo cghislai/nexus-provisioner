@@ -1,0 +1,5 @@
+GET {{uri}}//service/rest/v1/security/roles
+Authorization: Basic {{user}} {{password}}
+Accept: application/json
+
+###

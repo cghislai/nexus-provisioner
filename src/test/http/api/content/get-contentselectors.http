@@ -1,0 +1,3 @@
+GET {{uri}}//service/rest/v1/security/content-selectors
+Authorization: Basic {{user}} {{password}}
+Accept: application/json

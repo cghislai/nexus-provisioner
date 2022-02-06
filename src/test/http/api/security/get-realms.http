@@ -1,0 +1,9 @@
+GET {{uri}}//service/rest/v1/security/realms/active
+Authorization: Basic {{user}} {{password}}
+Accept: application/json
+
+###
+
+GET {{uri}}//service/rest/v1/security/realms/available
+Authorization: Basic {{user}} {{password}}
+Accept: application/json

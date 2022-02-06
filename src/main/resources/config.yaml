@@ -1,0 +1,181 @@
+debug: false
+prune: true
+kubernetesClientEnabled: false
+
+deployment:
+  namespace: 'nexus'
+  labelSelector: component=nexus
+  apiUri: http://127.0.0.1:8081/service/rest/
+
+initAdminPassword: false
+adminPassword:
+  clearText: admin
+
+email:
+  enabled: false
+
+ldapServers:
+  - name: ldap
+    ldaps: true
+    useTrustStore: true
+    host: openldap.sso.scv.cluster.local
+    port: 636
+    searchBaseDn: dc=exampl,dc=com
+    authScheme: 'SIMPLE'
+    authUsername: 'cn=readonly,dc=valuya,dc=com'
+    authPassword:
+      clearText: azezae
+      secretName: 'nexus-ldap-secret'
+      secretKey: 'readonly-bind-user-password'
+    userBaseDn: 'ou=users,dc=exampl,dc=com'
+    userSubtree: false
+    userObjectClass: inetOrgPerson
+    userFilter: ''
+    userIdAttr: 'cn'
+    userRealmNameAtr: 'givenName'
+    userEmailAttr: 'mail'
+    userPasswordAttr: 'userPassword'
+    groupAsRoles: true
+    groupType: "DYNAMIC"
+    userMemberOfAttr: memberOf
+
+
+enabledRealm:
+  - LOCAL_AUTHORIZING
+  - LOCAL_AUTHENTICATING
+  - NPM_TOKEN
+  - LDAP
+
+anonymous:
+  enabled: true
+
+roles:
+  - id: admins
+    name: admins
+    description: Admins
+    privileges:
+      - 'nx-component-upload'
+      - 'nx-repository-view-*-*-*'
+    roles:
+      - 'nx-anonymous'
+  - id: public-repo-view
+    name: public view
+    description: Public repo view
+    privileges:
+      - 'nx-repository-view-raw-rawPublic-read'
+      - 'nx-repository-view-raw-rawPublic-browse'
+
+users:
+  - id: anonymous
+    firstName: ''
+    lastName: ''
+    email: ''
+    roles:
+      - 'nx-anonymous'
+      - 'public-repo-view'
+
+hostedRespositories:
+  - name: mmaven-releases
+    format: MAVEN
+    online: true
+    mavenVersionPolicy: 'RELEASE'
+    mavenLayoutStrict: true
+    contentDisposition: 'INLINE'
+    cleanupPolicies:
+      - 'dont-keep-unused-6m'
+
+  - name: mmaven-snapshots
+    format: MAVEN
+    online: true
+    mavenVersionPolicy: 'SNAPSHOT'
+    mavenLayoutStrict: true
+    contentDisposition: 'INLINE'
+    cleanupPolicies:
+      - 'dont-keep-long'
+
+
+  - name: raw
+    format: RAW
+    online: true
+    contentDisposition: 'ATTACHMENT'
+
+  - name: rawPublic
+    format: RAW
+    online: true
+    contentDisposition: 'ATTACHMENT'
+
+  - name: npm
+    format: NPM
+    online: true
+    cleanupPolicies:
+      - 'dont-keep-unused-6m'
+
+  - name: helm
+    format: HELM
+    online: true
+
+  - name: docker
+    format: DOCKER
+    online: true
+    httpPort: 1080
+    forceBasicAuth: true
+    v1Enabled: false
+    cleanupPolicies:
+      - 'dont-keep-unused-6m'
+
+proxyRepositories:
+  - name: itext-proxy
+    format: MAVEN
+    online: true
+    uri: http://maven.icm.edu.pl/artifactory/repo/
+    cleanupPolicies:
+      - 'dont-keep-long'
+
+  - name: ac-europa-cefdigital
+    format: MAVEN
+    online: true
+    uri: https://ec.europa.eu/cefdigital/artifact/content/repositories/esignaturedss
+    cleanupPolicies:
+      - 'dont-keep-long'
+
+  - name: maven-central
+    format: MAVEN
+    online: true
+    uri: https://repo1.maven.org/maven2/
+    cleanupPolicies:
+      - 'dont-keep-long'
+
+  - name: jasperreport-proxy
+    format: MAVEN
+    online: true
+    uri: https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/
+    cleanupPolicies:
+      - 'dont-keep-long'
+
+  - name: jboss-public-repository-group
+    format: MAVEN
+    online: true
+    uri: https://repository.jboss.org/nexus/content/groups/public/
+    cleanupPolicies:
+      - 'dont-keep-long'
+
+  - name: wildfly-redhat-proxy
+    format: MAVEN
+    online: true
+    uri: https://maven.repository.redhat.com/ga/
+    cleanupPolicies:
+      - 'dont-keep-long'
+
+groupRepositories:
+  - name: maven-public
+    format: MAVEN
+    online: true
+    memeberNames:
+      - maven-releases
+      - maven-snapshots
+      - maven-central
+      - itext-proxy
+      - ac-europa-cefdigital
+      - jasperreport-proxy
+      - jboss-public-repository-group
+      - wildfly-redhat-proxy
