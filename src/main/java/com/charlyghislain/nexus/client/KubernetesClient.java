@@ -93,12 +93,10 @@ public class KubernetesClient {
 
         V1Secret v1Secret;
         try {
-            V1SecretList v1SecretList = api.listNamespacedSecret(nexusNamespace, null, null, null, "name=" + secretName, labelSelector,
-                    1, null, null, null, null);
-            if (v1SecretList.getItems().isEmpty()) {
+            v1Secret = api.readNamespacedSecret(secretName, nexusNamespace, null);
+            if (v1Secret == null) {
                 throw new ClientRuntimeError("No secret found for name " + secretName);
             }
-            v1Secret = v1SecretList.getItems().get(0);
         } catch (ApiException e) {
             throw new ClientRuntimeError("Unable to get secret " + secretName);
         }
