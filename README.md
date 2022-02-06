@@ -8,7 +8,7 @@ sufficient privileges.
 ## Example config file
 
 point to this file using the `NEXUS_PROVISIONER_CONFIG` env variable.
-see src/main/resources/config.yaml
+see src/main/resources/config.yaml (https://github.com/cghislai/nexus-provisioner/blob/352984910e3472e3085e7bbe4435e6f42a1cd8b5/src/main/resources/config.yaml)
 
 ```yaml
 # Debug output
