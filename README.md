@@ -8,6 +8,7 @@ sufficient privileges.
 ## Example config file
 
 point to this file using the `NEXUS_PROVISIONER_CONFIG` env variable.
+see src/main/resources/config.yaml
 
 ```yaml
 # Debug output
