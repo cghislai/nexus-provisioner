@@ -4,6 +4,8 @@ Provision nexus from a config file.
 
 Currently using api v3.37. Allows to fetch initial admin password and secret texts using kuberenetes client with
 sufficient privileges.
+- to fetch initial password, the client must list, get pods, and exec into it;
+- to fetch secret references, the client must get secrets.
 
 ## Example config file
 
