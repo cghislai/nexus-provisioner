@@ -173,8 +173,9 @@ public class NexusReconciliator {
                     serverDefaultRealmusers, nexusUserModels,
                     ApiUser::getUserId, NexusUserModel::getId,
                     m -> {
-                        Optional<String> password = Optional.ofNullable(m.getPassword())
-                                .map(kubernetesClient::resolveSecretValue);
+                        String password = Optional.ofNullable(m.getPassword())
+                                .map(kubernetesClient::resolveSecretValue)
+                                .orElseThrow(() -> new RuntimeException("No password provided for user " + m.getId()));
                         nexusClient.createUser(m, password);
                     },
                     nexusClient::removeUser,

@@ -11,4 +11,9 @@ public class NexusSecretValueModel {
     private String secretKey;
     private String clearText;
 
+    /**
+     * If not exists, will be provisionned with a random value.
+     */
+    private Boolean generated;
+
 }

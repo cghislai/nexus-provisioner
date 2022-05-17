@@ -6,6 +6,7 @@ Currently using api v3.37. Allows to fetch initial admin password and secret tex
 sufficient privileges.
 - to fetch initial password, the client must list, get pods, and exec into it;
 - to fetch secret references, the client must get secrets.
+- to generate secrets, the client must write secrets.
 
 ## Example config file
 
@@ -32,9 +33,11 @@ initAdminPassword: false
 adminPassword:
   # Secret texts can be provided as clearText..
   clearText: admin
-  # .. or as secretRef
+  # .. or reference a secret
   secretName: my-nexus-admin-password
   secretKey: admin-password
+  # .. in which case the secret value can be generated if the secretKey (or secret) does not exists.
+  generated: true
 
 # See complete example in repo resources/config.yaml
 ```

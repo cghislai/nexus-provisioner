@@ -811,7 +811,7 @@ public class NexusClient {
     }
 
 
-    public void createUser(NexusUserModel model, Optional<String> password) {
+    public void createUser(NexusUserModel model, String password) {
         ApiCreateUser.StatusEnum status = Optional.ofNullable(model.getStatus())
                 .map(ApiCreateUser.StatusEnum::fromValue)
                 .orElse(ApiCreateUser.StatusEnum.ACTIVE);
@@ -821,7 +821,7 @@ public class NexusClient {
                 .firstName(model.getFirstName())
                 .lastName(model.getLastName())
                 .status(status)
-                .password(password.orElse(null))
+                .password(password)
                 .roles(model.getRoles());
         v1Api.createUser(createUser);
     }

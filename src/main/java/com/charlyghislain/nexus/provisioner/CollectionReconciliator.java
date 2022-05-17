@@ -73,7 +73,7 @@ public class CollectionReconciliator {
                                                               List<API> sererValues,
                                                               List<MODEL> configValues,
                                                               Function<API, String> serverIdMapper,
-                                                              Function<MODEL, String> configIfMapper,
+                                                              Function<MODEL, String> configIdMapper,
                                                               Consumer<MODEL> creationConsumer,
                                                               Consumer<API> removalConsumer,
                                                               Consumer<MODEL> updateConsumer,
@@ -86,7 +86,7 @@ public class CollectionReconciliator {
                 ));
         Map<String, MODEL> configNamesValues = configValues.stream()
                 .collect(Collectors.toMap(
-                        configIfMapper,
+                        configIdMapper,
                         Function.identity()
                 ));
 
