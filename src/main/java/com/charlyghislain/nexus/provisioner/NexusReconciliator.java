@@ -79,7 +79,7 @@ public class NexusReconciliator {
                     .ifPresent(this::setAnonymous);
 
 
-            Optional.ofNullable(config.getHostedRespositories())
+            Optional.ofNullable(config.getHostedRepositories())
                     .ifPresent(this::updateHosted);
 
             Optional.ofNullable(config.getProxyRepositories())
@@ -99,7 +99,6 @@ public class NexusReconciliator {
         } finally {
             nexusClient.closeApiClient();
         }
-
     }
 
 

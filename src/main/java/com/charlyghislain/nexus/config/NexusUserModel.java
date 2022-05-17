@@ -15,7 +15,10 @@ public class NexusUserModel {
     private String email;
     private String source = "default";
     private NexusSecretValueModel password;
-    private Boolean active;
+    /**
+     * active | locked | disabled | changepassword
+     */
+    private String status;
 
     private List<String> roles;
 

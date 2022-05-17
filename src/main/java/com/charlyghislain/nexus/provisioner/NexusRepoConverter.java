@@ -209,11 +209,11 @@ public class NexusRepoConverter {
                 .map(StorageAttributes::getStrictContentTypeValidation)
                 .ifPresent(groupModel::setStrictContentValidation);
 
-        List<String> memeberNames = groupModel.getMemeberNames();
+        List<String> memberNames = groupModel.getMemberNames();
         Optional.ofNullable(npmGroup.getGroup())
                 .map(GroupDeployAttributes::getMemberNames)
-                .map(list -> reconciliator.reconcileNames("Group members", memeberNames, list))
-                .ifPresent(groupModel::setMemeberNames);
+                .map(list -> reconciliator.reconcileNames("Group members", memberNames, list))
+                .ifPresent(groupModel::setMemberNames);
 
     }
 
@@ -258,11 +258,11 @@ public class NexusRepoConverter {
                 .map(StorageAttributes::getStrictContentTypeValidation)
                 .ifPresent(groupModel::setStrictContentValidation);
 
-        List<String> memeberNames = groupModel.getMemeberNames();
+        List<String> memberNames = groupModel.getMemberNames();
         Optional.ofNullable(dockerGroup.getGroup())
                 .map(GroupDeployAttributes::getMemberNames)
-                .map(list -> reconciliator.reconcileNames("Group members", memeberNames, list))
-                .ifPresent(groupModel::setMemeberNames);
+                .map(list -> reconciliator.reconcileNames("Group members", memberNames, list))
+                .ifPresent(groupModel::setMemberNames);
 
     }
 
@@ -290,11 +290,11 @@ public class NexusRepoConverter {
                 .map(StorageAttributes::getStrictContentTypeValidation)
                 .ifPresent(groupModel::setStrictContentValidation);
 
-        List<String> memeberNames = groupModel.getMemeberNames();
+        List<String> memberNames = groupModel.getMemberNames();
         Optional.ofNullable(rawGroup.getGroup())
                 .map(GroupAttributes::getMemberNames)
-                .map(list -> reconciliator.reconcileNames("Group members", memeberNames, list))
-                .ifPresent(groupModel::setMemeberNames);
+                .map(list -> reconciliator.reconcileNames("Group members", memberNames, list))
+                .ifPresent(groupModel::setMemberNames);
     }
 
 

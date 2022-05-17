@@ -13,20 +13,35 @@ adminPassword:
 
 email:
   enabled: false
+  #host: ''
+  #port: 25
+  #username: ''
+  #password:
+  #  clearText: ''
+  #  secretName: ''
+  #  secretKey: ''
+  #from: ''
+  #subjectPrefix: ''
+  #startTls: false
+  #startTlsRequired: false
+  #ssl: false
+  #sslServerCheck: false
+  #nexusTrustStore: false
 
 ldapServers:
   - name: ldap
     ldaps: true
     useTrustStore: true
     host: openldap.sso.scv.cluster.local
+    # Using port 636 might require importing the ca into the truststore (can be done using web ui) whenever it changes
     port: 636
     searchBaseDn: dc=exampl,dc=com
     authScheme: 'SIMPLE'
     authUsername: 'cn=readonly,dc=valuya,dc=com'
     authPassword:
-      clearText: azezae
-      secretName: 'nexus-ldap-secret'
-      secretKey: 'readonly-bind-user-password'
+      # clearText: ''
+      # secretName: 'nexus-ldap-secret'
+      # secretKey: 'readonly-bind-user-password'
     userBaseDn: 'ou=users,dc=exampl,dc=com'
     userSubtree: false
     userObjectClass: inetOrgPerson
@@ -74,7 +89,20 @@ users:
       - 'nx-anonymous'
       - 'public-repo-view'
 
-hostedRespositories:
+  - id: 'another-user'
+    firstName: ''
+    lastName: ''
+    email: ''
+    status: 'active'
+    password:
+      # clearText: ''
+      secretName: ''
+      secretKey: ''
+    roles:
+      - 'nx-anonymous'
+      - 'public-repo-view'
+
+hostedRepositories:
   - name: mmaven-releases
     format: MAVEN
     online: true
@@ -170,7 +198,7 @@ groupRepositories:
   - name: maven-public
     format: MAVEN
     online: true
-    memeberNames:
+    memberNames:
       - maven-releases
       - maven-snapshots
       - maven-central

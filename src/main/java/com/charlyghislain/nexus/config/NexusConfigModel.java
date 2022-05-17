@@ -27,7 +27,7 @@ public class NexusConfigModel {
     private List<NexusRoleModel> roles;
     private List<NexusUserModel> users;
 
-    private List<NexusHostedRepoModel> hostedRespositories;
+    private List<NexusHostedRepoModel> hostedRepositories;
     private List<NexusProxyRepoModel> proxyRepositories;
     private List<NexusGroupRepoModel> groupRepositories;
 

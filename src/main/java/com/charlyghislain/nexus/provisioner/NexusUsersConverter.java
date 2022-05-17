@@ -25,8 +25,8 @@ public class NexusUsersConverter {
                 .ifPresent(nexusUserModel::setId);
 
         Optional.ofNullable(apiUser.getStatus())
-                .map(s -> s == ApiUser.StatusEnum.ACTIVE)
-                .ifPresent(nexusUserModel::setActive);
+                .map(ApiUser.StatusEnum::value)
+                .ifPresent(nexusUserModel::setStatus);
 
         Optional.ofNullable(apiUser.getEmailAddress())
                 .ifPresent(nexusUserModel::setEmail);

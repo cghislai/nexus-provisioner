@@ -481,59 +481,59 @@ public class NexusClient {
 
 
     public SimpleApiGroupRepository getMavenGroup(String name) {
-        return v1Api.getRepository(name);
-    }
-
-    public MavenHostedApiRepository getMavenHosted(String name) {
         return v1Api.getRepository1(name);
     }
 
-    public MavenProxyApiRepository getMavenProxy(String name) {
+    public MavenHostedApiRepository getMavenHosted(String name) {
         return v1Api.getRepository2(name);
     }
 
-    public DockerGroupApiRepository getDockerGroup(String name) {
-        return v1Api.getRepository17(name);
+    public MavenProxyApiRepository getMavenProxy(String name) {
+        return v1Api.getRepository3(name);
     }
 
-    public DockerHostedApiRepository getDockerHosted(String name) {
+    public DockerGroupApiRepository getDockerGroup(String name) {
         return v1Api.getRepository18(name);
     }
 
-    public DockerProxyApiRepository getDockerProxy(String name) {
+    public DockerHostedApiRepository getDockerHosted(String name) {
         return v1Api.getRepository19(name);
     }
 
-    public SimpleApiGroupDeployRepository getNpmGroup(String name) {
-        return v1Api.getRepository8(name);
+    public DockerProxyApiRepository getDockerProxy(String name) {
+        return v1Api.getRepository20(name);
     }
 
-    public SimpleApiHostedRepository getNpmHosted(String name) {
+    public SimpleApiGroupDeployRepository getNpmGroup(String name) {
         return v1Api.getRepository9(name);
     }
 
-    public NpmProxyApiRepository getNpmProxy(String name) {
+    public SimpleApiHostedRepository getNpmHosted(String name) {
         return v1Api.getRepository10(name);
     }
 
-    public SimpleApiGroupRepository getRawGroup(String name) {
-        return v1Api.getRepository5(name);
+    public NpmProxyApiRepository getNpmProxy(String name) {
+        return v1Api.getRepository11(name);
     }
 
-    public SimpleApiHostedRepository getRawHosted(String name) {
+    public SimpleApiGroupRepository getRawGroup(String name) {
         return v1Api.getRepository6(name);
     }
 
-    public SimpleApiProxyRepository getRawProxy(String name) {
+    public SimpleApiHostedRepository getRawHosted(String name) {
         return v1Api.getRepository7(name);
     }
 
+    public SimpleApiProxyRepository getRawProxy(String name) {
+        return v1Api.getRepository8(name);
+    }
+
     public SimpleApiHostedRepository getHelmHosted(String name) {
-        return v1Api.getRepository23(name);
+        return v1Api.getRepository24(name);
     }
 
     public SimpleApiProxyRepository getHelmProxy(String name) {
-        return v1Api.getRepository24(name);
+        return v1Api.getRepository25(name);
     }
 
     private MavenHostedRepositoryApiRequest toMavenHostedRepository(NexusHostedRepoModel repoModel) {
@@ -626,7 +626,7 @@ public class NexusClient {
                         .strictContentTypeValidation(repoModel.getStrictContentValidation())
                 )
                 .group(new GroupAttributes()
-                        .memberNames(repoModel.getMemeberNames()));
+                        .memberNames(repoModel.getMemberNames()));
         return repo;
     }
 
@@ -639,7 +639,7 @@ public class NexusClient {
                         .strictContentTypeValidation(repoModel.getStrictContentValidation())
                 )
                 .group(new GroupDeployAttributes()
-                        .memberNames(repoModel.getMemeberNames()));
+                        .memberNames(repoModel.getMemberNames()));
         return repo;
     }
 
@@ -652,7 +652,7 @@ public class NexusClient {
                         .strictContentTypeValidation(repoModel.getStrictContentValidation())
                 )
                 .group(new GroupAttributes()
-                        .memberNames(repoModel.getMemeberNames()));
+                        .memberNames(repoModel.getMemberNames()));
         return repo;
     }
 
@@ -665,7 +665,7 @@ public class NexusClient {
                         .strictContentTypeValidation(repoModel.getStrictContentValidation())
                 )
                 .group(new GroupDeployAttributes()
-                        .memberNames(repoModel.getMemeberNames()));
+                        .memberNames(repoModel.getMemberNames()));
         return repo;
     }
 
@@ -812,13 +812,14 @@ public class NexusClient {
 
 
     public void createUser(NexusUserModel model, Optional<String> password) {
-
-        boolean active = Optional.ofNullable(model.getActive()).orElse(true);
+        ApiCreateUser.StatusEnum status = Optional.ofNullable(model.getStatus())
+                .map(ApiCreateUser.StatusEnum::fromValue)
+                .orElse(ApiCreateUser.StatusEnum.ACTIVE);
         ApiCreateUser createUser = new ApiCreateUser()
                 .emailAddress(model.getEmail())
                 .firstName(model.getFirstName())
                 .lastName(model.getLastName())
-                .status(active ? ApiCreateUser.StatusEnum.ACTIVE : ApiCreateUser.StatusEnum.DISABLED)
+                .status(status)
                 .password(password.orElse(null))
                 .roles(model.getRoles());
         v1Api.createUser(createUser);
@@ -832,14 +833,17 @@ public class NexusClient {
     }
 
     private ApiUser toApiUser(NexusUserModel model) {
-        boolean active = Optional.ofNullable(model.getActive()).orElse(true);
+        ApiUser.StatusEnum status = Optional.ofNullable(model.getStatus())
+                .map(ApiUser.StatusEnum::fromValue)
+                .orElse(ApiUser.StatusEnum.ACTIVE);
+
         return new ApiUser()
                 .userId(model.getId())
                 .emailAddress(model.getEmail())
                 .firstName(model.getFirstName())
                 .lastName(model.getLastName())
                 .source(model.getSource())
-                .status(active ? ApiUser.StatusEnum.ACTIVE : ApiUser.StatusEnum.LOCKED)
+                .status(status)
                 .roles(model.getRoles());
     }
 

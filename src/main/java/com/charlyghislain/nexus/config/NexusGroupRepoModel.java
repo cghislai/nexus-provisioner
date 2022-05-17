@@ -19,7 +19,7 @@ public class NexusGroupRepoModel {
     private Boolean strictContentValidation = true;
     private WritePolicy writePolicy = WritePolicy.ALLOW;
 
-    private List<String> memeberNames = new ArrayList<>();
+    private List<String> memberNames = new ArrayList<>();
 
 
 }

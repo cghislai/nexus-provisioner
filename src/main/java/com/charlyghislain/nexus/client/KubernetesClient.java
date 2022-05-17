@@ -109,7 +109,7 @@ public class KubernetesClient {
         String secretName = secret.getMetadata().getName();
 
         try {
-            if (secret != null && secret.getData() != null && secret.getData().containsKey(key)) {
+            if (secret.getData() != null && secret.getData().containsKey(key)) {
                 data = new String(secret.getData().get(key));
             } else {
                 throw new ClientRuntimeError("Unable to find secretKey " + key + " in secret " + secretName);
@@ -118,6 +118,9 @@ public class KubernetesClient {
             throw new ClientRuntimeError("Unable to read secretKey " + key + " in secret " + secretName);
         }
 
+        if (data.length() > 0) {
+            LOG.fine("Found secret data of length " + data.length() + " for secret key " + key);
+        }
         return data;
     }
 
