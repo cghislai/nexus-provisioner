@@ -39,9 +39,9 @@ ldapServers:
     authScheme: 'SIMPLE'
     authUsername: 'cn=readonly,dc=valuya,dc=com'
     authPassword:
-      # clearText: ''
-      # secretName: 'nexus-ldap-secret'
-      # secretKey: 'readonly-bind-user-password'
+    # clearText: ''
+    # secretName: 'nexus-ldap-secret'
+    # secretKey: 'readonly-bind-user-password'
     userBaseDn: 'ou=users,dc=exampl,dc=com'
     userSubtree: false
     userObjectClass: inetOrgPerson
@@ -89,6 +89,7 @@ users:
       - 'nx-anonymous'
       - 'public-repo-view'
 
+  # Users are created in the default source 'local'
   - id: 'another-user'
     firstName: ''
     lastName: ''

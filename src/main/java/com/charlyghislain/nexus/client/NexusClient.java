@@ -816,6 +816,7 @@ public class NexusClient {
                 .map(ApiCreateUser.StatusEnum::fromValue)
                 .orElse(ApiCreateUser.StatusEnum.ACTIVE);
         ApiCreateUser createUser = new ApiCreateUser()
+                .userId(model.getId())
                 .emailAddress(model.getEmail())
                 .firstName(model.getFirstName())
                 .lastName(model.getLastName())
