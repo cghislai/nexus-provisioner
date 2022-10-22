@@ -11,7 +11,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.resteasy>5.0.1.Final</version.resteasy>
-        <version.swaggerSpec>3.38</version.swaggerSpec>
+        <version.swaggerSpec>3.42</version.swaggerSpec>
     </properties>
 
     <distributionManagement>
@@ -42,7 +42,7 @@
         <dependency>
             <groupId>io.kubernetes</groupId>
             <artifactId>client-java</artifactId>
-            <version>15.0.1</version>
+            <version>16.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.microprofile.rest.client</groupId>
@@ -93,12 +93,12 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>1.6.4</version>
+            <version>1.6.8</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>1.18.24</version>
         </dependency>
     </dependencies>
 

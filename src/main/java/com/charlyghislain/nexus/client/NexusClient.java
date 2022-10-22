@@ -17,6 +17,7 @@ import com.charlyghislain.nexus.nexus.DockerGroupApiRepository;
 import com.charlyghislain.nexus.nexus.DockerGroupRepositoryApiRequest;
 import com.charlyghislain.nexus.nexus.DockerHostedApiRepository;
 import com.charlyghislain.nexus.nexus.DockerHostedRepositoryApiRequest;
+import com.charlyghislain.nexus.nexus.DockerHostedStorageAttributes;
 import com.charlyghislain.nexus.nexus.DockerProxyApiRepository;
 import com.charlyghislain.nexus.nexus.DockerProxyRepositoryApiRequest;
 import com.charlyghislain.nexus.nexus.GroupAttributes;
@@ -559,10 +560,10 @@ public class NexusClient {
         DockerHostedRepositoryApiRequest repo = new DockerHostedRepositoryApiRequest()
                 .name(repoModel.getName())
                 .online(repoModel.getOnline())
-                .storage(new HostedStorageAttributes()
+                .storage(new DockerHostedStorageAttributes()
                         .blobStoreName(repoModel.getBlobStore())
                         .strictContentTypeValidation(repoModel.getStrictContentValidation())
-                        .writePolicy(HostedStorageAttributes.WritePolicyEnum.valueOf(repoModel.getWritePolicy().name()))
+                        .writePolicy(DockerHostedStorageAttributes.WritePolicyEnum.valueOf(repoModel.getWritePolicy().name()))
                 )
                 .docker(new DockerAttributes()
                         .forceBasicAuth(repoModel.getForceBasicAuth())
