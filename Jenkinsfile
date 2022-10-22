@@ -48,17 +48,17 @@ pipeline {
                         env.MVN_ARGS="${env.MVN_ARGS}"
                     }
                 }
-                withCredentials([file(credentialsId: "${params.GPG_KEY_CREDENTIAL_ID}", variable: 'GPGKEY')]) {
-                    sh 'gpg --batch --allow-secret-key-import --import $GPGKEY'
-                    sh "echo \"${params.GPG_KEY_FINGERPRINT}:6:\" | gpg --batch --import-ownertrust"
-                }
-                withMaven(maven: 'maven', mavenSettingsConfig: 'ossrh-cghislai-settings-xml', jdk: 'jdk11') {
-                    sh "mvn deploy $MVN_ARGS"
-                    script {
-                        VERSION = sh(script: 'JENKINS_MAVEN_AGENT_DISABLED=true mvn help:evaluate -Dexpression=project.version -q -DforceStdout | tail -n1', returnStdout: true).trim()
-                    }
-                }
                 container('docker') {
+                    withCredentials([file(credentialsId: "${params.GPG_KEY_CREDENTIAL_ID}", variable: 'GPGKEY')]) {
+                        sh 'gpg --batch --allow-secret-key-import --import $GPGKEY'
+                        sh "echo \"${params.GPG_KEY_FINGERPRINT}:6:\" | gpg --batch --import-ownertrust"
+                    }
+                    withMaven(maven: 'maven', mavenSettingsConfig: 'ossrh-cghislai-settings-xml', jdk: 'jdk11') {
+                        sh "mvn deploy $MVN_ARGS"
+                        script {
+                            VERSION = sh(script: 'JENKINS_MAVEN_AGENT_DISABLED=true mvn help:evaluate -Dexpression=project.version -q -DforceStdout | tail -n1', returnStdout: true).trim()
+                        }
+                    }
                     script {
                         def image = docker.build("${params.DOCKER_REPO}/nexus-provisioner:${VERSION}")
                         image.push()
