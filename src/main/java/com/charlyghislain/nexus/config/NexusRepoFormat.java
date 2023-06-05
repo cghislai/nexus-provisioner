@@ -8,6 +8,7 @@ public enum NexusRepoFormat {
     HELM("helm"),
     DOCKER("docker"),
     MAVEN("maven2"),
+    PYPI("pypi")
 
     ;
 

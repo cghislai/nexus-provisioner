@@ -1,55 +1,8 @@
 package com.charlyghislain.nexus.client;
 
 import com.charlyghislain.nexus.api.LdapServer;
-import com.charlyghislain.nexus.config.NexusAnonymousModel;
-import com.charlyghislain.nexus.config.NexusGroupRepoModel;
-import com.charlyghislain.nexus.config.NexusHostedRepoModel;
-import com.charlyghislain.nexus.config.NexusProxyRepoModel;
-import com.charlyghislain.nexus.config.NexusUserModel;
-import com.charlyghislain.nexus.nexus.AnonymousAccessSettingsXO;
-import com.charlyghislain.nexus.nexus.ApiCreateUser;
-import com.charlyghislain.nexus.nexus.ApiEmailConfiguration;
-import com.charlyghislain.nexus.nexus.ApiUser;
-import com.charlyghislain.nexus.nexus.CleanupPolicyAttributes;
-import com.charlyghislain.nexus.nexus.ComponentAttributes;
-import com.charlyghislain.nexus.nexus.DockerAttributes;
-import com.charlyghislain.nexus.nexus.DockerGroupApiRepository;
-import com.charlyghislain.nexus.nexus.DockerGroupRepositoryApiRequest;
-import com.charlyghislain.nexus.nexus.DockerHostedApiRepository;
-import com.charlyghislain.nexus.nexus.DockerHostedRepositoryApiRequest;
-import com.charlyghislain.nexus.nexus.DockerProxyApiRepository;
-import com.charlyghislain.nexus.nexus.DockerProxyRepositoryApiRequest;
-import com.charlyghislain.nexus.nexus.GroupAttributes;
-import com.charlyghislain.nexus.nexus.GroupDeployAttributes;
-import com.charlyghislain.nexus.nexus.HelmHostedRepositoryApiRequest;
-import com.charlyghislain.nexus.nexus.HelmProxyRepositoryApiRequest;
-import com.charlyghislain.nexus.nexus.HostedStorageAttributes;
-import com.charlyghislain.nexus.nexus.HttpClientAttributes;
-import com.charlyghislain.nexus.nexus.HttpClientAttributesWithPreemptiveAuth;
-import com.charlyghislain.nexus.nexus.MavenAttributes;
-import com.charlyghislain.nexus.nexus.MavenGroupRepositoryApiRequest;
-import com.charlyghislain.nexus.nexus.MavenHostedApiRepository;
-import com.charlyghislain.nexus.nexus.MavenHostedRepositoryApiRequest;
-import com.charlyghislain.nexus.nexus.MavenProxyApiRepository;
-import com.charlyghislain.nexus.nexus.MavenProxyRepositoryApiRequest;
-import com.charlyghislain.nexus.nexus.NegativeCacheAttributes;
-import com.charlyghislain.nexus.nexus.NpmGroupRepositoryApiRequest;
-import com.charlyghislain.nexus.nexus.NpmHostedRepositoryApiRequest;
-import com.charlyghislain.nexus.nexus.NpmProxyApiRepository;
-import com.charlyghislain.nexus.nexus.NpmProxyRepositoryApiRequest;
-import com.charlyghislain.nexus.nexus.ProxyAttributes;
-import com.charlyghislain.nexus.nexus.RawGroupRepositoryApiRequest;
-import com.charlyghislain.nexus.nexus.RawHostedRepositoryApiRequest;
-import com.charlyghislain.nexus.nexus.RawProxyRepositoryApiRequest;
-import com.charlyghislain.nexus.nexus.RepositoryXO;
-import com.charlyghislain.nexus.nexus.RoleXORequest;
-import com.charlyghislain.nexus.nexus.RoleXOResponse;
-import com.charlyghislain.nexus.nexus.SimpleApiGroupDeployRepository;
-import com.charlyghislain.nexus.nexus.SimpleApiGroupRepository;
-import com.charlyghislain.nexus.nexus.SimpleApiHostedRepository;
-import com.charlyghislain.nexus.nexus.SimpleApiProxyRepository;
-import com.charlyghislain.nexus.nexus.StorageAttributes;
-import com.charlyghislain.nexus.nexus.V1Api;
+import com.charlyghislain.nexus.config.*;
+import com.charlyghislain.nexus.nexus.*;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -335,6 +288,11 @@ public class NexusClient {
                 v1Api.createRepository1(repo);
                 break;
             }
+            case PYPI: {
+                PypiHostedRepositoryApiRequest repo = toPypiHostedRepository(repoModel);
+                v1Api.createRepository27(repo);
+                break;
+            }
         }
     }
 
@@ -364,6 +322,11 @@ public class NexusClient {
             case MAVEN: {
                 MavenHostedRepositoryApiRequest repo = toMavenHostedRepository(repoModel);
                 v1Api.updateRepository1(repo.getName(), repo);
+                break;
+            }
+            case PYPI: {
+                PypiHostedRepositoryApiRequest repo = toPypiHostedRepository(repoModel);
+                v1Api.updateRepository27(repo.getName(), repo);
                 break;
             }
         }
@@ -396,6 +359,11 @@ public class NexusClient {
                 v1Api.createRepository2(repo);
                 break;
             }
+            case PYPI: {
+                PypiProxyRepositoryApiRequest repo = toPypiProxyRepository(repoModel);
+                v1Api.createRepository28(repo);
+                break;
+            }
         }
     }
 
@@ -426,6 +394,11 @@ public class NexusClient {
                 v1Api.updateRepository2(repo.getName(), repo);
                 break;
             }
+            case PYPI: {
+                PypiProxyRepositoryApiRequest repo = toPypiProxyRepository(repoModel);
+                v1Api.updateRepository28(repo.getName(), repo);
+                break;
+            }
         }
     }
 
@@ -451,6 +424,11 @@ public class NexusClient {
                 v1Api.createRepository(repo);
                 break;
             }
+            case PYPI: {
+                PypiGroupRepositoryApiRequest repo = toPypiGroupRepository(repoModel);
+                v1Api.createRepository26(repo);
+                break;
+            }
         }
     }
 
@@ -474,6 +452,11 @@ public class NexusClient {
             case MAVEN: {
                 MavenGroupRepositoryApiRequest repo = toMavenGroupRepository(repoModel);
                 v1Api.updateRepository(repo.getName(), repo);
+                break;
+            }
+            case PYPI: {
+                PypiGroupRepositoryApiRequest repo = toPypiGroupRepository(repoModel);
+                v1Api.updateRepository26(repo.getName(), repo);
                 break;
             }
         }
@@ -528,6 +511,18 @@ public class NexusClient {
         return v1Api.getRepository8(name);
     }
 
+    public SimpleApiGroupRepository getPypiGroup(String name) {
+        return v1Api.getRepository27(name);
+    }
+
+    public SimpleApiHostedRepository getPypiHosted(String name) {
+        return v1Api.getRepository28(name);
+    }
+
+    public SimpleApiProxyRepository getPypiProxy(String name) {
+        return v1Api.getRepository29(name);
+    }
+
     public SimpleApiHostedRepository getHelmHosted(String name) {
         return v1Api.getRepository24(name);
     }
@@ -559,10 +554,10 @@ public class NexusClient {
         DockerHostedRepositoryApiRequest repo = new DockerHostedRepositoryApiRequest()
                 .name(repoModel.getName())
                 .online(repoModel.getOnline())
-                .storage(new HostedStorageAttributes()
+                .storage(new DockerHostedStorageAttributes()
                         .blobStoreName(repoModel.getBlobStore())
                         .strictContentTypeValidation(repoModel.getStrictContentValidation())
-                        .writePolicy(HostedStorageAttributes.WritePolicyEnum.valueOf(repoModel.getWritePolicy().name()))
+                        .writePolicy(DockerHostedStorageAttributes.WritePolicyEnum.valueOf(repoModel.getWritePolicy().name()))
                 )
                 .docker(new DockerAttributes()
                         .forceBasicAuth(repoModel.getForceBasicAuth())
@@ -605,6 +600,20 @@ public class NexusClient {
 
     private NpmHostedRepositoryApiRequest toNpmHostedRepository(NexusHostedRepoModel repoModel) {
         NpmHostedRepositoryApiRequest repo = new NpmHostedRepositoryApiRequest()
+                .name(repoModel.getName())
+                .online(repoModel.getOnline())
+                .storage(new HostedStorageAttributes()
+                        .blobStoreName(repoModel.getBlobStore())
+                        .strictContentTypeValidation(repoModel.getStrictContentValidation())
+                        .writePolicy(HostedStorageAttributes.WritePolicyEnum.valueOf(repoModel.getWritePolicy().name()))
+                )
+                .cleanup(new CleanupPolicyAttributes().policyNames(repoModel.getCleanupPolicies()))
+                .component(new ComponentAttributes());
+        return repo;
+    }
+
+    private PypiHostedRepositoryApiRequest toPypiHostedRepository(NexusHostedRepoModel repoModel) {
+        PypiHostedRepositoryApiRequest repo = new PypiHostedRepositoryApiRequest()
                 .name(repoModel.getName())
                 .online(repoModel.getOnline())
                 .storage(new HostedStorageAttributes()
@@ -665,6 +674,19 @@ public class NexusClient {
                         .strictContentTypeValidation(repoModel.getStrictContentValidation())
                 )
                 .group(new GroupDeployAttributes()
+                        .memberNames(repoModel.getMemberNames()));
+        return repo;
+    }
+
+    private PypiGroupRepositoryApiRequest toPypiGroupRepository(NexusGroupRepoModel repoModel) {
+        PypiGroupRepositoryApiRequest repo = new PypiGroupRepositoryApiRequest()
+                .name(repoModel.getName())
+                .online(repoModel.getOnline())
+                .storage(new StorageAttributes()
+                        .blobStoreName(repoModel.getBlobStore())
+                        .strictContentTypeValidation(repoModel.getStrictContentValidation())
+                )
+                .group(new GroupAttributes()
                         .memberNames(repoModel.getMemberNames()));
         return repo;
     }
@@ -782,6 +804,31 @@ public class NexusClient {
 
     private NpmProxyRepositoryApiRequest toNpmProxyRepository(NexusProxyRepoModel repoModel) {
         NpmProxyRepositoryApiRequest repo = new NpmProxyRepositoryApiRequest()
+                .name(repoModel.getName())
+                .online(repoModel.getOnline())
+                .storage(new StorageAttributes()
+                        .blobStoreName(repoModel.getBlobStore())
+                        .strictContentTypeValidation(repoModel.getStrictContentValidation())
+                )
+                .negativeCache(new NegativeCacheAttributes()
+                        .enabled(repoModel.getNegativeCache())
+                        .timeToLive(repoModel.getNegativeCacheTTl())
+                )
+                .httpClient(new HttpClientAttributes()
+                        .autoBlock(repoModel.getHttpAutoBlock())
+                        .blocked(repoModel.getHttpAuthBlocked())
+                )
+                .cleanup(new CleanupPolicyAttributes().policyNames(repoModel.getCleanupPolicies()))
+                .proxy(new ProxyAttributes()
+                        .contentMaxAge(repoModel.getMaxAge())
+                        .metadataMaxAge(repoModel.getMetadataMaxAge())
+                        .remoteUrl(repoModel.getUri())
+                );
+        return repo;
+    }
+
+    private PypiProxyRepositoryApiRequest toPypiProxyRepository(NexusProxyRepoModel repoModel) {
+        PypiProxyRepositoryApiRequest repo = new PypiProxyRepositoryApiRequest()
                 .name(repoModel.getName())
                 .online(repoModel.getOnline())
                 .storage(new StorageAttributes()

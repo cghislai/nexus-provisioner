@@ -3,31 +3,8 @@ package com.charlyghislain.nexus.provisioner;
 import com.charlyghislain.nexus.client.ClientRuntimeError;
 import com.charlyghislain.nexus.client.KubernetesClient;
 import com.charlyghislain.nexus.client.NexusClient;
-import com.charlyghislain.nexus.config.NexusGroupRepoModel;
-import com.charlyghislain.nexus.config.NexusHostedRepoModel;
-import com.charlyghislain.nexus.config.NexusProxyRepoModel;
-import com.charlyghislain.nexus.config.NexusRepoFormat;
-import com.charlyghislain.nexus.config.WritePolicy;
-import com.charlyghislain.nexus.nexus.CleanupPolicyAttributes;
-import com.charlyghislain.nexus.nexus.DockerAttributes;
-import com.charlyghislain.nexus.nexus.DockerGroupApiRepository;
-import com.charlyghislain.nexus.nexus.DockerHostedApiRepository;
-import com.charlyghislain.nexus.nexus.DockerProxyApiRepository;
-import com.charlyghislain.nexus.nexus.GroupAttributes;
-import com.charlyghislain.nexus.nexus.GroupDeployAttributes;
-import com.charlyghislain.nexus.nexus.HostedStorageAttributes;
-import com.charlyghislain.nexus.nexus.MavenAttributes;
-import com.charlyghislain.nexus.nexus.MavenHostedApiRepository;
-import com.charlyghislain.nexus.nexus.MavenProxyApiRepository;
-import com.charlyghislain.nexus.nexus.NegativeCacheAttributes;
-import com.charlyghislain.nexus.nexus.NpmProxyApiRepository;
-import com.charlyghislain.nexus.nexus.ProxyAttributes;
-import com.charlyghislain.nexus.nexus.RepositoryXO;
-import com.charlyghislain.nexus.nexus.SimpleApiGroupDeployRepository;
-import com.charlyghislain.nexus.nexus.SimpleApiGroupRepository;
-import com.charlyghislain.nexus.nexus.SimpleApiHostedRepository;
-import com.charlyghislain.nexus.nexus.SimpleApiProxyRepository;
-import com.charlyghislain.nexus.nexus.StorageAttributes;
+import com.charlyghislain.nexus.config.*;
+import com.charlyghislain.nexus.nexus.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -69,6 +46,10 @@ public class NexusRepoConverter {
                 patchRawHosted(roleModel, apiRepository.getName());
                 break;
             }
+            case "pypi": {
+                patchPypiHosted(roleModel, apiRepository.getName());
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Not yet implemented");
         }
@@ -99,6 +80,10 @@ public class NexusRepoConverter {
                 patchRawProxy(roleModel, apiRepository.getName());
                 break;
             }
+            case "pypi": {
+                patchPypiProxy(roleModel, apiRepository.getName());
+                break;
+            }
             default:
                 throw new UnsupportedOperationException("Not yet implemented");
         }
@@ -126,6 +111,10 @@ public class NexusRepoConverter {
             }
             case "raw": {
                 patchRawGroup(roleModel, apiRepository.getName());
+                break;
+            }
+            case "pypi": {
+                patchPypiGroup(roleModel, apiRepository.getName());
                 break;
             }
             default:
@@ -237,6 +226,29 @@ public class NexusRepoConverter {
         groupModel.setFormat(NexusRepoFormat.RAW);
 
         patchSimpleGroup(groupModel, rawGroup);
+
+    }
+
+    private void patchPypiHosted(NexusHostedRepoModel hostedModel, String name) {
+        SimpleApiHostedRepository pypiHosted = nexusClient.getPypiHosted(name);
+        hostedModel.setFormat(NexusRepoFormat.PYPI);
+
+        patchSimpleHosted(hostedModel, pypiHosted);
+
+    }
+
+    private void patchPypiProxy(NexusProxyRepoModel proxyModel, String name) {
+        SimpleApiProxyRepository pypiProxy = nexusClient.getPypiProxy(name);
+        proxyModel.setFormat(NexusRepoFormat.PYPI);
+
+        patchSimpleProxy(proxyModel, pypiProxy);
+    }
+
+    private void patchPypiGroup(NexusGroupRepoModel groupModel, String name) {
+        SimpleApiGroupRepository pypiGroup = nexusClient.getPypiGroup(name);
+        groupModel.setFormat(NexusRepoFormat.PYPI);
+
+        patchSimpleGroup(groupModel, pypiGroup);
 
     }
 
