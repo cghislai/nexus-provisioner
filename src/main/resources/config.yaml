@@ -143,6 +143,10 @@ hostedRepositories:
     format: HELM
     online: true
 
+  - name: pypi
+    format: PYPI
+    online: true
+
   - name: docker
     format: DOCKER
     online: true
