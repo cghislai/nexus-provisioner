@@ -13,7 +13,9 @@ import org.jboss.resteasy.plugins.providers.DefaultTextPlain;
 import org.jboss.resteasy.plugins.providers.StringTextStar;
 import org.jboss.resteasy.plugins.providers.jackson.ResteasyJackson2Provider;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.Closeable;
 import java.io.IOException;
@@ -904,7 +906,17 @@ public class NexusClient {
     }
 
     public ApiCertificate importCertificateToTrustStore(String pemValue) {
-        ApiCertificate apiCertificate = v1Api.addCertificate(pemValue);
-        return apiCertificate;
+        try {
+            ApiCertificate apiCertificate = v1Api.addCertificate(pemValue);
+            return apiCertificate;
+        } catch (WebApplicationException e) {
+            Response response = e.getResponse();
+            if (response.getStatus() == 409) {
+                // Certificates already exists
+                LOG.fine("Ignoring certificate import following http error response with code 409");
+                return null;
+            }
+            throw e;
+        }
     }
 }

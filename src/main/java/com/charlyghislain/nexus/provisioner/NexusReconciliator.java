@@ -155,7 +155,9 @@ public class NexusReconciliator {
             for (NexusCertificateModel certificateModel : nexusCertificateModels) {
                 String publicKeyPem = kubernetesClient.resolveSecretValue(certificateModel.getPublicKeyPem());
                 ApiCertificate createdCertificate = nexusClient.importCertificateToTrustStore(publicKeyPem);
-                LOG.finer("Imported trusted certificate " + createdCertificate.getId() + " " + createdCertificate.getSubjectCommonName());
+                if (createdCertificate != null) {
+                    LOG.finer("Imported trusted certificate " + createdCertificate.getId() + " " + createdCertificate.getSubjectCommonName());
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException("Unable to import trusted certificates", e);
