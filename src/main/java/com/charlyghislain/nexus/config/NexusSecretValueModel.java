@@ -9,6 +9,14 @@ public class NexusSecretValueModel {
 
     private String secretName;
     private String secretKey;
+
+    /**
+     * When unspecified, will use the deployment namespace
+     */
+    private String secretNamespace;
+    /**
+     * Clear text value to use when specified. Will ignore secrets reading
+     */
     private String clearText;
 
     /**

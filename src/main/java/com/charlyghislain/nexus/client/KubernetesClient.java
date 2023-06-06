@@ -90,6 +90,8 @@ public class KubernetesClient {
         }
         checkEnabled();
 
+        String secretNamespace = Optional.ofNullable(secretValueModel.getSecretNamespace())
+                .orElse(nexusNamespace);
         String secretName = Optional.ofNullable(secretValueModel.getSecretName())
                 .orElseThrow(() -> new ClientRuntimeError("No secret name"));
         String secretKey = Optional.ofNullable(secretValueModel.getSecretKey())
@@ -99,7 +101,7 @@ public class KubernetesClient {
 
         V1Secret v1SecretNullable;
         try {
-            v1SecretNullable = api.readNamespacedSecret(secretName, nexusNamespace, null);
+            v1SecretNullable = api.readNamespacedSecret(secretName, secretNamespace, null);
             if (v1SecretNullable == null && !generated) {
                 throw new ClientRuntimeError("No secret found for name " + secretName);
             }
@@ -114,7 +116,7 @@ public class KubernetesClient {
             }
         }
 
-        String secretData = getOrGenerateSecretData(v1SecretNullable, nexusNamespace, secretName, secretKey, generated);
+        String secretData = getOrGenerateSecretData(v1SecretNullable, secretNamespace, secretName, secretKey, generated);
         return secretData;
     }
 
