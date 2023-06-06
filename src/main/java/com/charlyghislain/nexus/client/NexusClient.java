@@ -857,7 +857,6 @@ public class NexusClient {
         return users;
     }
 
-
     public void createUser(NexusUserModel model, String password) {
         ApiCreateUser.StatusEnum status = Optional.ofNullable(model.getStatus())
                 .map(ApiCreateUser.StatusEnum::fromValue)
@@ -902,5 +901,10 @@ public class NexusClient {
             return;
         }
         v1Api.deleteUser(apiUser.getUserId());
+    }
+
+    public ApiCertificate importCertificateToTrustStore(String pemValue) {
+        ApiCertificate apiCertificate = v1Api.addCertificate(pemValue);
+        return apiCertificate;
     }
 }

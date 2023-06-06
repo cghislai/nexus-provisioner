@@ -103,6 +103,12 @@ users:
       - 'nx-anonymous'
       - 'public-repo-view'
 
+trustedCertificates:
+  - publicKeyPem:
+      secretNamespace: ''
+      secretName: ''
+      secretKey: ''
+
 hostedRepositories:
   - name: mmaven-releases
     format: MAVEN

@@ -5,23 +5,8 @@ import com.charlyghislain.nexus.client.ClientException;
 import com.charlyghislain.nexus.client.ClientRuntimeError;
 import com.charlyghislain.nexus.client.KubernetesClient;
 import com.charlyghislain.nexus.client.NexusClient;
-import com.charlyghislain.nexus.config.NexusAnonymousModel;
-import com.charlyghislain.nexus.config.NexusConfigModel;
-import com.charlyghislain.nexus.config.NexusDeploymentConfigModel;
-import com.charlyghislain.nexus.config.NexusEmailModel;
-import com.charlyghislain.nexus.config.NexusGroupRepoModel;
-import com.charlyghislain.nexus.config.NexusHostedRepoModel;
-import com.charlyghislain.nexus.config.NexusLdapServerModel;
-import com.charlyghislain.nexus.config.NexusProxyRepoModel;
-import com.charlyghislain.nexus.config.NexusRealms;
-import com.charlyghislain.nexus.config.NexusRoleModel;
-import com.charlyghislain.nexus.config.NexusSecretValueModel;
-import com.charlyghislain.nexus.config.NexusUserModel;
-import com.charlyghislain.nexus.nexus.ApiEmailConfiguration;
-import com.charlyghislain.nexus.nexus.ApiUser;
-import com.charlyghislain.nexus.nexus.RepositoryXO;
-import com.charlyghislain.nexus.nexus.RoleXORequest;
-import com.charlyghislain.nexus.nexus.RoleXOResponse;
+import com.charlyghislain.nexus.config.*;
+import com.charlyghislain.nexus.nexus.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -96,6 +81,9 @@ public class NexusReconciliator {
             Optional.ofNullable(config.getUsers())
                     .ifPresent(this::updateUsers);
 
+            Optional.ofNullable(config.getTrustedCertificates())
+                    .ifPresent(this::importCertificates);
+
         } finally {
             nexusClient.closeApiClient();
         }
@@ -159,6 +147,18 @@ public class NexusReconciliator {
             );
         } catch (Exception e) {
             throw new RuntimeException("Unable to synchronize roles", e);
+        }
+    }
+
+    private void importCertificates(List<NexusCertificateModel> nexusCertificateModels) {
+        try {
+            for (NexusCertificateModel certificateModel : nexusCertificateModels) {
+                String publicKeyPem = kubernetesClient.resolveSecretValue(certificateModel.getPublicKeyPem());
+                ApiCertificate createdCertificate = nexusClient.importCertificateToTrustStore(publicKeyPem);
+                LOG.finer("Imported trusted certificate " + createdCertificate.getId() + " " + createdCertificate.getSubjectCommonName());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to import trusted certificates", e);
         }
     }
 
