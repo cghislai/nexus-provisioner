@@ -1,14 +1,11 @@
 package com.charlyghislain.nexus.provisioner;
 
 import com.charlyghislain.nexus.client.KubernetesClient;
-import com.charlyghislain.nexus.config.NexusRoleModel;
 import com.charlyghislain.nexus.config.NexusUserModel;
 import com.charlyghislain.nexus.nexus.ApiUser;
-import com.charlyghislain.nexus.nexus.RoleXORequest;
-import com.charlyghislain.nexus.nexus.RoleXOResponse;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class NexusUsersConverter {
 
@@ -40,7 +37,7 @@ public class NexusUsersConverter {
         Optional.ofNullable(apiUser.getSource())
                 .ifPresent(nexusUserModel::setSource);
 
-        List<String> curRoles = nexusUserModel.getRoles();
+        Set<String> curRoles = nexusUserModel.getRoles();
         Optional.ofNullable(apiUser.getRoles())
                 .map(r -> reconciliator.reconcileNames("Role", r, curRoles))
                 .ifPresent(nexusUserModel::setRoles);

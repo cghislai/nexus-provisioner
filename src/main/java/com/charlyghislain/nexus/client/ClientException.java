@@ -1,8 +1,6 @@
 package com.charlyghislain.nexus.client;
 
-public class ClientException extends Exception {
-    public ClientException() {
-    }
+public class ClientException extends RuntimeException {
 
     public ClientException(String message) {
         super(message);
@@ -12,11 +10,4 @@ public class ClientException extends Exception {
         super(message, cause);
     }
 
-    public ClientException(Throwable cause) {
-        super(cause);
-    }
-
-    public ClientException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }
