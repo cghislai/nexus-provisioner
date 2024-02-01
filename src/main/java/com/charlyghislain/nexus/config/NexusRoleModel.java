@@ -15,7 +15,7 @@ public class NexusRoleModel {
     private String description;
     private String source = "default";
 
-    private List<String> privileges;
-    private List<String> roles;
+    private Set<String> privileges;
+    private Set<String> roles;
 
 }

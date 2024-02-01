@@ -5,8 +5,8 @@ import com.charlyghislain.nexus.config.NexusRoleModel;
 import com.charlyghislain.nexus.nexus.RoleXORequest;
 import com.charlyghislain.nexus.nexus.RoleXOResponse;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class NexusRoleConverter {
 
@@ -40,12 +40,12 @@ public class NexusRoleConverter {
         Optional.ofNullable(roleModel.getDescription())
                 .ifPresent(roleXORequest::description);
 
-        List<String> serverPrivileges = roleXORequest.getPrivileges();
+        Set<String> serverPrivileges = roleXORequest.getPrivileges();
         Optional.ofNullable(roleModel.getPrivileges())
                 .map(r -> reconciliator.reconcileNames("Role privileges", serverPrivileges, r))
                 .ifPresent(roleXORequest::setPrivileges);
 
-        List<String> roles = roleXORequest.getRoles();
+        Set<String> roles = roleXORequest.getRoles();
         Optional.ofNullable(roleModel.getRoles())
                 .map(r -> reconciliator.reconcileNames("Role roles", roles, r))
                 .ifPresent(roleXORequest::setRoles);

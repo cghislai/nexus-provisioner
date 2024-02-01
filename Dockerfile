@@ -1,4 +1,4 @@
-FROM openjdk:15.0.1-slim
+FROM openjdk:21-slim
 
 ADD target/nexus-provisioner-jar-with-dependencies.jar /provisioner.jar
 

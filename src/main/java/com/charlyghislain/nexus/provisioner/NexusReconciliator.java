@@ -5,8 +5,23 @@ import com.charlyghislain.nexus.client.ClientException;
 import com.charlyghislain.nexus.client.ClientRuntimeError;
 import com.charlyghislain.nexus.client.KubernetesClient;
 import com.charlyghislain.nexus.client.NexusClient;
-import com.charlyghislain.nexus.config.*;
-import com.charlyghislain.nexus.nexus.*;
+import com.charlyghislain.nexus.config.NexusAnonymousModel;
+import com.charlyghislain.nexus.config.NexusConfigModel;
+import com.charlyghislain.nexus.config.NexusDeploymentConfigModel;
+import com.charlyghislain.nexus.config.NexusEmailModel;
+import com.charlyghislain.nexus.config.NexusGroupRepoModel;
+import com.charlyghislain.nexus.config.NexusHostedRepoModel;
+import com.charlyghislain.nexus.config.NexusLdapServerModel;
+import com.charlyghislain.nexus.config.NexusProxyRepoModel;
+import com.charlyghislain.nexus.config.NexusRealms;
+import com.charlyghislain.nexus.config.NexusRoleModel;
+import com.charlyghislain.nexus.config.NexusSecretValueModel;
+import com.charlyghislain.nexus.config.NexusUserModel;
+import com.charlyghislain.nexus.nexus.AbstractApiRepository;
+import com.charlyghislain.nexus.nexus.ApiEmailConfiguration;
+import com.charlyghislain.nexus.nexus.ApiUser;
+import com.charlyghislain.nexus.nexus.RoleXORequest;
+import com.charlyghislain.nexus.nexus.RoleXOResponse;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -49,57 +64,51 @@ public class NexusReconciliator {
             adminPassword = kubernetesClient.resolveSecretValue(adminPassword1);
         }
 
-        nexusClient.openApiClient(adminPassword);
-        try {
-            Optional.ofNullable(config.getEmail())
-                    .ifPresent(this::updateEmailConfig);
+        nexusClient.setAdminPassword(adminPassword);
 
-            Optional.ofNullable(config.getLdapServers())
-                    .ifPresent(this::updateLdapServers);
+        Optional.ofNullable(config.getEmail())
+                .ifPresent(this::updateEmailConfig);
 
-            Optional.ofNullable(config.getEnabledRealm())
-                    .ifPresent(this::updateRealms);
+        Optional.ofNullable(config.getLdapServers())
+                .ifPresent(this::updateLdapServers);
 
-            Optional.ofNullable(config.getAnonymous())
-                    .ifPresent(this::setAnonymous);
+        Optional.ofNullable(config.getEnabledRealm())
+                .ifPresent(this::updateRealms);
 
-
-            Optional.ofNullable(config.getHostedRepositories())
-                    .ifPresent(this::updateHosted);
-
-            Optional.ofNullable(config.getProxyRepositories())
-                    .ifPresent(this::updateProxies);
+        Optional.ofNullable(config.getAnonymous())
+                .ifPresent(this::setAnonymous);
 
 
-            Optional.ofNullable(config.getGroupRepositories())
-                    .ifPresent(this::updateGroups);
+        Optional.ofNullable(config.getHostedRepositories())
+                .ifPresent(this::updateHosted);
+
+        Optional.ofNullable(config.getProxyRepositories())
+                .ifPresent(this::updateProxies);
 
 
-            Optional.ofNullable(config.getRoles())
-                    .ifPresent(this::updateRoles);
+        Optional.ofNullable(config.getGroupRepositories())
+                .ifPresent(this::updateGroups);
 
-            Optional.ofNullable(config.getUsers())
-                    .ifPresent(this::updateUsers);
 
-            Optional.ofNullable(config.getTrustedCertificates())
-                    .ifPresent(this::importCertificates);
+        Optional.ofNullable(config.getRoles())
+                .ifPresent(this::updateRoles);
 
-        } finally {
-            nexusClient.closeApiClient();
-        }
+        Optional.ofNullable(config.getUsers())
+                .ifPresent(this::updateUsers);
+
     }
 
 
     private void updateGroups(List<NexusGroupRepoModel> configRepos) {
         try {
-            List<RepositoryXO> serverRepos = nexusClient.getGroupRepos();
+            List<AbstractApiRepository> serverRepos = nexusClient.getGroupRepos();
 
             NexusRepoConverter repoConverter = new NexusRepoConverter(kubernetesClient, nexusClient, reconciliator);
 
             reconciliator.reconcileCollectionsAPreferModel(
                     "Group repositories",
                     serverRepos, configRepos,
-                    RepositoryXO::getName, NexusGroupRepoModel::getName,
+                    AbstractApiRepository::getName, NexusGroupRepoModel::getName,
                     nexusClient::createGroup,
                     nexusClient::removeReposiory,
                     nexusClient::updateGroup,
@@ -112,14 +121,14 @@ public class NexusReconciliator {
 
     private void updateProxies(List<NexusProxyRepoModel> configRepos) {
         try {
-            List<RepositoryXO> serverRepos = nexusClient.getProxies();
+            List<AbstractApiRepository> serverRepos = nexusClient.getProxies();
 
             NexusRepoConverter repoConverter = new NexusRepoConverter(kubernetesClient, nexusClient, reconciliator);
 
             reconciliator.reconcileCollectionsAPreferModel(
                     "Proxy repositories",
                     serverRepos, configRepos,
-                    RepositoryXO::getName, NexusProxyRepoModel::getName,
+                    AbstractApiRepository::getName, NexusProxyRepoModel::getName,
                     nexusClient::createProxy,
                     nexusClient::removeReposiory,
                     nexusClient::updateProxy,
@@ -132,14 +141,14 @@ public class NexusReconciliator {
 
     private void updateHosted(List<NexusHostedRepoModel> configRepos) {
         try {
-            List<RepositoryXO> serverRepos = nexusClient.getHosted();
+            List<AbstractApiRepository> serverRepos = nexusClient.getHosted();
 
             NexusRepoConverter repoConverter = new NexusRepoConverter(kubernetesClient, nexusClient, reconciliator);
 
             reconciliator.reconcileCollectionsAPreferModel(
                     "Hosted repositories",
                     serverRepos, configRepos,
-                    RepositoryXO::getName, NexusHostedRepoModel::getName,
+                    AbstractApiRepository::getName, NexusHostedRepoModel::getName,
                     nexusClient::createHosted,
                     nexusClient::removeReposiory,
                     nexusClient::updateHosted,
@@ -147,18 +156,6 @@ public class NexusReconciliator {
             );
         } catch (Exception e) {
             throw new RuntimeException("Unable to synchronize roles", e);
-        }
-    }
-
-    private void importCertificates(List<NexusCertificateModel> nexusCertificateModels) {
-        try {
-            for (NexusCertificateModel certificateModel : nexusCertificateModels) {
-                String publicKeyPem = kubernetesClient.resolveSecretValue(certificateModel.getPublicKeyPem());
-                ApiCertificate createdCertificate = nexusClient.importCertificateToTrustStore(publicKeyPem);
-                LOG.finer("Imported trusted certificate " + createdCertificate.getId() + " " + createdCertificate.getSubjectCommonName());
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to import trusted certificates", e);
         }
     }
 

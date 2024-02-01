@@ -1,6 +1,7 @@
 package com.charlyghislain.nexus.provisioner;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -172,8 +173,8 @@ public class CollectionReconciliator {
 
 
     public <T> void reconcileCollectionsA(String resourceMessage,
-                                          List<T> sererValues,
-                                          List<T> configValues,
+                                          Collection<T> sererValues,
+                                          Collection<T> configValues,
                                           Function<T, String> serverIdMapper,
                                           Function<T, String> configIfMapper,
                                           Consumer<T> creationConsumer,
@@ -219,5 +220,15 @@ public class CollectionReconciliator {
         return new ArrayList<>(newNames).stream()
                 .filter(s -> s != null && !s.isBlank())
                 .collect(Collectors.toList());
+    }
+
+    public Set<String> reconcileNames(String label, Set<String> serverNames, Set<String> configNames) {
+
+        Set<String> newNames = new HashSet<>(serverNames);
+        reconcileCollectionsA(label, serverNames, configNames, Function.identity(), Function.identity(),
+                newNames::add, newNames::remove);
+        return new ArrayList<>(newNames).stream()
+                .filter(s -> s != null && !s.isBlank())
+                .collect(Collectors.toSet());
     }
 }

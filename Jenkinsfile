@@ -24,7 +24,7 @@ pipeline {
                         env.MVN_ARGS="${env.MVN_ARGS} -DaltDeploymentRepository=${params.ALT_DEPLOYMENT_REPOSITORY}"
                     }
                 }
-                withMaven(maven: 'maven', mavenSettingsConfig: 'nexus-mvn-settings') {
+                withMaven(maven: 'maven', mavenSettingsConfig: 'nexus-mvn-settings', jdk: 'jdk21') {
                     sh "mvn -DskipTests=${params.SKIP_TESTS} clean compile install"
                 }
             }
@@ -53,7 +53,7 @@ pipeline {
                         sh 'gpg --batch --allow-secret-key-import --import $GPGKEY'
                         sh "echo \"${params.GPG_KEY_FINGERPRINT}:6:\" | gpg --batch --import-ownertrust"
                     }
-                    withMaven(maven: 'maven', mavenSettingsConfig: 'ossrh-cghislai-settings-xml', jdk: 'jdk11') {
+                    withMaven(maven: 'maven', mavenSettingsConfig: 'ossrh-cghislai-settings-xml', jdk: 'jdk21') {
                         sh "mvn deploy $MVN_ARGS"
                         script {
                             VERSION = sh(script: 'JENKINS_MAVEN_AGENT_DISABLED=true mvn help:evaluate -Dexpression=project.version -q -DforceStdout | tail -n1', returnStdout: true).trim()
