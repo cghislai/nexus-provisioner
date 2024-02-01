@@ -5,7 +5,7 @@
 
     <groupId>com.charlyghislain.nexus</groupId>
     <artifactId>nexus-provisioner</artifactId>
-    <version>2.3.0</version>
+    <version>2.3.1-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
