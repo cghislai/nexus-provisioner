@@ -658,7 +658,7 @@ public class NexusClient {
             LOG.fine("Ignoring pruning protected user " + apiUser.getUserId());
             return;
         }
-        withApi(SecurityManagementUsersApi.class, api -> api.deleteUser(apiUser.getUserId()),
+        withApi(SecurityManagementUsersApi.class, api -> api.deleteUser(apiUser.getUserId(), null),
                 "Unable to delete user " + apiUser.getUserId());
     }
 
